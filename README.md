@@ -8,9 +8,26 @@ A high level nodejs s3 wrapper
 npm install storage-lib
 ```
 
+
+## Config
+```js
+var config = {   // must provide these
+  s3Options: {
+    accessKeyId: '',
+    secretAccessKey: '',
+    region: ''
+  },
+  uploads: {
+    s3Bucket: '',
+    dest: '' // default: '/tmp/upload'
+  }
+}
+```
+
+
 ## Usage
 ```js
-var storageHelper = require('storage-lib')(config) // read more about config in following section
+var storageHelper = require('storage-lib')(config) // see the above config
 
 // check remote file exists
 storageHelper.remoteFileExists('http://remote.file.url', function (err, exists) {
@@ -41,23 +58,6 @@ storageHelper.toS3('/full/local/file/path.txt', 'remote/file/path/in/s3.txt', fu
 ```
 
 
-## Config
-```js
-var config = {   // must provide these
-  s3Options: {
-    accessKeyId: '',
-    secretAccessKey: '',
-    region: ''
-  },
-  uploads: {
-    s3Bucket: '',
-    dest: '' // default: '/tmp/upload'
-  }
-}
-```
-
-## TODO
-- remove `gulp` dependency
 
 ## License
 (The MIT License)

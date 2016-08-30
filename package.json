@@ -13,13 +13,13 @@
     "library"
   ],
   "dependencies": {
-    "glob": "~7.0.5",
-    "gulp": "~3.9.1",
     "lodash": "~4.15.0",
     "request": "^2.74.0",
     "s3": "git+https://github.com/andrewrk/node-s3-client.git"
   },
   "devDependencies": {
+    "glob": "~7.0.5",
+    "gulp": "~3.9.1",
     "chai": "~3.5.0",
     "eslint": "~3.2.2",
     "gulp-eslint": "~3.0.1",

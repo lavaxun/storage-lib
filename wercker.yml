@@ -17,6 +17,12 @@ build:
 publish-npm:
   steps:
     - script:
+        name: set production env
+        code: export NODE_ENV=production
+    - script:
+        name: remove dev dependencies
+        code: npm prune
+    - script:
         name: set npm credentials
         code: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
     - script:

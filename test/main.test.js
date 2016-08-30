@@ -56,16 +56,20 @@ describe('higher level s3 storage helpers', function () {
   context('upload context', function () {
     var filePath = './test/fixtures/pixel.gif'
     var removePath = 'output/pixel.gif'
+    var remotePath = removePath
 
     afterEach(function (done) {
-      storageInstance.removeFile(removePath, function () {
+      storageInstance.removeFile(removePath, function (err) {
+        if (err) {
+          //
+        }
         done()
       })
     })
 
     it('should be able to upload media to s3', function (done) {
       this.timeout(20000)
-      storageInstance.toS3(filePath, removePath, function (err, url) {
+      storageInstance.toS3(filePath, remotePath, function (err, url) {
         if (err) {
           //
         }

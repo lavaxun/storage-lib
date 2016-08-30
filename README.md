@@ -1,4 +1,4 @@
-# S3 storage helper  [![wercker status](https://app.wercker.com/status/a891080ef23f64251eb729d499efbb46/s/master "wercker status")](https://app.wercker.com/project/byKey/a891080ef23f64251eb729d499efbb46)   [![Dependency Status](https://gemnasium.com/badges/github.com/axnux/storage-lib.svg)](https://gemnasium.com/github.com/axnux/storage-lib)  
+# S3 storage helper  [![wercker status](https://app.wercker.com/status/a891080ef23f64251eb729d499efbb46/s/master "wercker status")](https://app.wercker.com/project/byKey/a891080ef23f64251eb729d499efbb46)   [![Dependency Status](https://gemnasium.com/badges/github.com/axnux/storage-lib.svg)](https://gemnasium.com/github.com/axnux/storage-lib)   [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/axnux/storage-lib/issues)   [![npm version](https://badge.fury.io/js/storage-lib.svg)](https://badge.fury.io/js/storage-lib)
 A high level nodejs s3 wrapper
 
 

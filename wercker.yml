@@ -1,0 +1,10 @@
+box:
+  id: node:6
+
+dev:
+  steps:
+    - script:
+        name: start bdd environment
+        code: npm run bdd
+    # - npm-install
+    # - npm-test

@@ -18,9 +18,7 @@ publish-npm:
   steps:
     - script:
         name: set npm credentials
-        code: |
-            echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
-            npm whoami
+        code: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
     - script:
         name: publish npm module
         code: npm publish

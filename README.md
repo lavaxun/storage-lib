@@ -1,12 +1,63 @@
 # S3 storage helper  [![wercker status](https://app.wercker.com/status/a891080ef23f64251eb729d499efbb46/s/master "wercker status")](https://app.wercker.com/project/byKey/a891080ef23f64251eb729d499efbb46)  
 A high level nodejs s3 wrapper
 
+
+
+## Installation
+```shell
+npm install storage-lib
+```
+
 ## Usage
 ```js
+var storageHelper = require('storage-lib')(config) // read more about config in following section
 
+// check remote file exists
+storageHelper.remoteFileExists('http://remote.file.url', function (err, exists) {
+  // exists: true, false
+})
+
+// get the local storage folder path
+storageHelper.storageFolder() // same as config.uploads.dest
+
+// download the remote file with and rename as local/file/path.txt (inside the folder  storageHelper.storageFolder())
+storageHelper.downloadFile('http://remote.file.url', 'local/file/path.txt', function (err, fullLocalPath) {
+  // 'fullLocalPath' will be:
+  // config.uploads.dest + '/' + 'local/file/path.txt'
+})
+
+// delete file from s3
+storageHelper.removeFile('remote/file/path/in/s3', function () {
+  //
+})
+
+// upload file to s3
+storageHelper.toS3('/full/local/file/path.txt', 'remote/file/path/in/s3.txt', function (err, url) {
+  // will upload the file from '/full/local/file/path.txt' to s3
+  // 'url' will be:
+  // a valid http(s)://url.pointing.tos3bucket/remote/file/path/in/s3.txt
+})
 
 ```
 
+
+## Config
+```js
+var config = {   // must provide these
+  s3Options: {
+    accessKeyId: '',
+    secretAccessKey: '',
+    region: ''
+  },
+  uploads: {
+    s3Bucket: '',
+    dest: '' // default: '/tmp/upload'
+  }
+}
+```
+
+## TODO
+- remove `gulp` dependency
 
 ## License
 (The MIT License)

@@ -14,7 +14,7 @@ describe('higher level s3 storage helpers', function () {
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
       region: process.env.S3_REGION
     },
-    'uploads': {
+    uploads: {
       s3Bucket: process.env.S3_BUCKET,
       dest: process.env.UPLOAD_DIR || '/tmp/upload'
     }

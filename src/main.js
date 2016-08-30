@@ -114,4 +114,4 @@ var getStorageServiceInstance = function (config) {
   return storageService
 }
 
-exports.getInstance = getStorageServiceInstance
+module.exports = getStorageServiceInstance

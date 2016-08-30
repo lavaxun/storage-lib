@@ -1,30 +1,12 @@
-# S3 storage helper  
+# S3 storage helper  [![wercker status](https://app.wercker.com/status/a891080ef23f64251eb729d499efbb46/s/master "wercker status")](https://app.wercker.com/project/byKey/a891080ef23f64251eb729d499efbb46)  
 A high level nodejs s3 wrapper
 
-Support for **Docker** through **Wercker**
+## Usage
+```js
 
-## Start development with local nodejs (recommended)
-### Prerequisites  
-- nodejs  
 
-### Instructions  
-1. First install the dependencies using `npm install`  
-2. To start with development, you have to:  
-   - execute `npm run bdd` and keep it running in terminal  
-     *Note: this will not start your web app but continuous testing.*  
-     *every time you update your js files. it will auto restart test cases.*  
+```
 
-## Alternatives (using Wercker)
-### Prerequisites  
-- docker for Mac/Windows/Linux (*or virtualbox 5.0.20 + boot2docker-vagrant*)  
-- wercker cli  
-
-### Wercker dev
-For some reason you might don't want to use nodejs in your local machine.   
-Then you can still start development using **wercker cli**:
-
-1. To start with development using **wercker**  
-    execute `wercker dev`   
 
 ## License
 (The MIT License)

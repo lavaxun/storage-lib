@@ -8,14 +8,15 @@ var expect = chai.expect
 describe('higher level s3 storage helpers', function () {
   var filePath = 'pixel.gif'
   var remoteFile = 'https://s3-ap-southeast-1.amazonaws.com/dummy-test-fixtures-sp/pixel.gif'
-  var storageInstance = main.getInstance({
+  var storageInstance = main({
     s3Options: {
       accessKeyId: process.env.S3_ACCESS_KEY_ID,
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
       region: process.env.S3_REGION
     },
     'uploads': {
-      s3Bucket: process.env.S3_BUCKET
+      s3Bucket: process.env.S3_BUCKET,
+      dest: process.env.UPLOAD_DIR || '/tmp/upload'
     }
   })
 
@@ -32,7 +33,7 @@ describe('higher level s3 storage helpers', function () {
   context('download context', function () {
     var fullPath = storageInstance.storageFolder() + '/' + filePath
 
-    beforeEach(function (done) {
+    afterEach(function (done) {
       if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath)
       }
@@ -56,7 +57,7 @@ describe('higher level s3 storage helpers', function () {
     var filePath = './test/fixtures/pixel.gif'
     var removePath = 'output/pixel.gif'
 
-    beforeEach(function (done) {
+    afterEach(function (done) {
       storageInstance.removeFile(removePath, function () {
         done()
       })

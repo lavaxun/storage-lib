@@ -8,3 +8,19 @@ dev:
         code: npm run bdd
     # - npm-install
     # - npm-test
+
+build:
+  steps:
+    - npm-install
+    - npm-test
+
+publish-npm:
+  steps:
+    - script:
+        name: set npm credentials
+        code: |
+            echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
+            npm whoami
+    - script:
+        name: publish npm module
+        code: npm publish

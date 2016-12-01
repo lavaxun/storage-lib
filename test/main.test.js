@@ -67,7 +67,7 @@ describe('higher level s3 storage helpers', function () {
       })
     })
 
-    it('should be able to upload media to s3', function (done) {
+    it.only('should be able to upload media to s3', function (done) {
       this.timeout(20000)
       storageInstance.toS3(filePath, remotePath, function (err, url) {
         if (err) {

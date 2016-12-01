@@ -3,39 +3,36 @@
 var _ = require('lodash')
 var request = require('request')
 var fs = require('fs')
-var s3 = require('s3')
+var mime = require('mime')
+var url = require('url')
+var AwsS3 = require('aws-sdk').S3
 
 var getStorageServiceInstance = function (config) {
   var storageService = {
-    client: null,
+    _s3: null,
     config: {
       s3Options: {
         accessKeyId: '',
         secretAccessKey: '',
-        region: ''
+        region: '',
+        maxRetries: 3
       },
       uploads: {
         s3Bucket: '',
         dest: '/tmp/upload'
+        // defaultContentType
       }
     }
   }
 
   storageService.config = _.defaultsDeep(config, storageService.config)
   storageService.getS3Client = function () {
-    if (_.isObject(this.client) && !_.isEmpty(this.client)) {
-      return this.client
+    if (_.isObject(this._s3) && !_.isEmpty(this._s3)) {
+      return this._s3
     }
 
-    this.client = s3.createClient({
-      maxAsyncS3: 20,     // this is the default
-      s3RetryCount: 3,    // this is the default
-      s3RetryDelay: 1000, // this is the default
-      multipartUploadThreshold: 20971520, // this is the default (20 MB)
-      multipartUploadSize: 15728640, // this is the default (15 MB)
-      s3Options: this.config.s3Options
-    })
-    return this.client
+    this._s3 = new AwsS3(this.config.s3Options)
+    return this._s3
   }
 
   storageService.remoteFileExists = function (remoteUrl, done) {
@@ -63,52 +60,76 @@ var getStorageServiceInstance = function (config) {
   }
 
   storageService.toS3 = function (filePath, remoteFilePath, done) {
+    var self = this
     var uploadKey = remoteFilePath
     var uploadBucket = this.config.uploads.s3Bucket
-    var client = this.getS3Client()
-    var params = {
-      localFile: filePath,
-      s3Params: {
-        Bucket: uploadBucket,
-        Key: uploadKey
-      }
+
+    var s3Params = {
+      Body: fs.createReadStream(filePath),
+      Bucket: uploadBucket,
+      Key: encodeSpecialCharacters(uploadKey)
     }
-    var self = this
-    var uploader = client.uploadFile(params)
-    uploader.on('error', function (err) {
-      console.log(err)
-      done(err, null)
-    }).on('end', function () {
-      var s3Url = s3.getPublicUrl(uploadBucket, uploadKey, self.config.s3Options.region)
+
+    // taken from https://github.com/andrewrk/node-s3-client/blob/master/lib/index.js
+    if (s3Params.ContentType === undefined) {
+      var defaultContentType = this.config.uploads.defaultContentType || 'application/octet-stream'
+      s3Params.ContentType = mime.lookup(filePath, defaultContentType)
+    }
+
+    var client = this.getS3Client()
+    client.putObject(s3Params, function (err, data) {
+      if (err) {
+        done(err)
+        return
+      }
+      var s3Url = getPublicUrl(uploadBucket, uploadKey, self.config.s3Options.region)
       done(null, s3Url)
     })
   }
 
   storageService.removeFile = function (remoteFilePath, done) {
+    var self = this
     var deleteKey = remoteFilePath
     var targetBucket = this.config.uploads.s3Bucket
-    var client = this.getS3Client()
-    var params = {
+    var s3Params = {
       Bucket: targetBucket,
-      Delete: {
-        Objects: [
-          {
-            Key: deleteKey
-          }
-        ],
-        Quiet: true
-      }
+      Key: encodeSpecialCharacters(deleteKey)
     }
-    var deleter = client.deleteObjects(params)
-    deleter.on('error', function (err) {
-      done(err)
-    }).on('end', function () {
-      done(null)
+
+    var client = this.getS3Client()
+    client.deleteObject(s3Params, function (err, data) {
+      if (err) {
+        done(err)
+        return
+      }
+      var s3Url = getPublicUrl(targetBucket, deleteKey, self.config.s3Options.region)
+      done(null, s3Url)
     })
   }
 
   storageService.storageFolder = function () {
     return _.trimEnd(this.config.uploads.dest)
+  }
+
+  // this code is shamelessly taken from this repo
+  // https://github.com/andrewrk/node-s3-client/blob/master/lib/index.js
+  function getPublicUrl (bucket, key, bucketLocation, endpoint) {
+    var nonStandardBucketLocation = (bucketLocation && bucketLocation !== 'us-east-1')
+    var hostnamePrefix = nonStandardBucketLocation ? ('s3-' + bucketLocation) : 's3'
+    var parts = {
+      protocol: 'https:',
+      hostname: hostnamePrefix + '.' + (endpoint || 'amazonaws.com'),
+      pathname: '/' + bucket + '/' + encodeSpecialCharacters(key)
+    }
+    return url.format(parts)
+  }
+
+  function encodeSpecialCharacters (filename) {
+    // Note: these characters are valid in URIs, but S3 does not like them for
+    // some reason.
+    return encodeURI(filename).replace(/[!'()* ]/g, function (char) {
+      return '%' + char.charCodeAt(0).toString(16)
+    })
   }
 
   return storageService
